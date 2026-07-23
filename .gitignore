@@ -1,0 +1,14 @@
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+*_files/
+*_cache/
+*.log
+*.aux
+*.out
+*.toc
+*.synctex.gz
+*.pdf
+Artigo-Estatistica.tex
+*.knit-concordance.tex
