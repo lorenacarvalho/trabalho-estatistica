@@ -117,7 +117,7 @@ teste_bp <- function(modelo) {
 
 # Introdução
 
-O consumo de combustível é uma das características que mais interessam a quem compra um carro,  tanto pelo custo de uso quanto pelo impacto ambiental. Entender quais características técnicas do veículo determinam sua eficiência é, um problema clássico de modelagem estatística aplicada, e é justamente esse o objetivo deste trabalho.
+O consumo de combustível é uma das características que mais interessam a quem compra um carro, tanto pelo custo de uso quanto pelo impacto ambiental. Entender quais características técnicas do veículo determinam sua eficiência é um problema clássico de modelagem estatística aplicada e constitui o objetivo deste trabalho.
 
 Utilizamos o conjunto de dados `Auto`, do pacote ISLR \cite{James2013}, com registros de 392 automóveis de modelos fabricados entre 1970 e 1982. O objetivo é modelar o consumo de combustível (`mpg`, medido em milhas por galão) a partir das demais características do veículo — como peso, potência, cilindrada e origem — e identificar quais delas mais influenciam a economia. Este problema é particularmente instrutivo porque as variáveis que descrevem o "porte" do motor (número de cilindros, cilindrada, potência e peso) são fortemente associadas entre si, o que exige diagnóstico cuidadoso de multicolinearidade antes de qualquer conclusão sobre o efeito individual de cada variável.
 
@@ -153,7 +153,7 @@ Como a origem do veículo é uma variável categórica com três níveis (americ
 
 ## Validação preditiva por treino e teste
 
-Para avaliar a capacidade de generalização do modelo final, além do ajuste sobre a amostra completa, a base foi dividida aleatoriamente em 80% para treino e 20% para teste. O modelo foi estimado apenas no conjunto de treino e avaliado no de teste — dados que não participaram de sua estimação — comparando-se a raiz do erro quadrático médio (RMSE) e o $R^2$ obtidos em cada conjunto, calculados na escala original da resposta.
+Para avaliar a capacidade de generalização do modelo final, dividimos aleatoriamente a base em 80% para treino e 20% para teste. Estimamos o modelo apenas no conjunto de treino e verificamos seu desempenho nos dados de teste, que não participaram do ajuste. A comparação usa a raiz do erro quadrático médio (RMSE) e o $R^2$ de cada conjunto, ambos calculados na escala original da resposta.
 
 ## Inferência preditiva
 
@@ -192,7 +192,7 @@ A variável resposta é `mpg`. Das oito variáveis restantes, seis são numéric
 
 ## Análise exploratória
 
-Uma verificação inicial confirma a ausência de dados faltantes em todas as variáveis:
+Começamos verificando se alguma variável ainda apresentava dados faltantes:
 
 ```{r ausentes, echo=TRUE}
 colSums(is.na(dados))
@@ -216,7 +216,7 @@ knitr::kable(tab_desc, format = "pipe", row.names = FALSE,
              caption = "\\label{tab:descritivas} Estatísticas descritivas das variáveis numéricas.")
 ```
 
-O consumo médio é de `r round(mean(dados$mpg), 1)` mpg, variando de `r min(dados$mpg)` a `r max(dados$mpg)` mpg. A Figura \ref{fig:histMpg} mostra que a distribuição de `mpg` é assimétrica à direita: a maioria dos veículos consome entre 15 e 30 mpg, com uma cauda de carros muito econômicos. Essa assimetria é um primeiro indício de que uma transformação da variável resposta (por exemplo, logarítmica) poderá ser útil na etapa de modelagem.
+Os automóveis percorrem, em média, `r round(mean(dados$mpg), 1)` milhas por galão, mas a amplitude de `r min(dados$mpg)` a `r max(dados$mpg)` mpg revela perfis de eficiência bastante diferentes. A Figura \ref{fig:histMpg} mostra que a maior parte dos veículos está entre 15 e 30 mpg, enquanto poucos modelos muito econômicos formam uma cauda à direita. Esse formato antecipa a possível necessidade de transformar a resposta na etapa de modelagem.
 
 ```{r histMpg, fig.cap="\\label{fig:histMpg} Distribuição do consumo de combustível (mpg). A linha tracejada indica a média.", fig.width=6, fig.height=3.6, out.width="75%"}
 ggplot(dados, aes(mpg)) +
@@ -302,11 +302,11 @@ Table: (\#tab:vifCompleto) Fator de inflação de variância (VIF) de cada vari�
 
 O modelo inicial apresenta ajuste elevado ($R^2$ ajustado $= `r round(summary(modelo1)$adj.r.squared, 4)`$). Entretanto, a Tabela \ref{tab:vifCompleto} confirma multicolinearidade severa entre as variáveis de porte do motor: `displacement` apresenta VIF de `r round(vif_manual(modelo1)["displacement"],1)`, `weight` de `r round(vif_manual(modelo1)["weight"],1)`, `cylinders` de `r round(vif_manual(modelo1)["cylinders"],1)` e `horsepower` de `r round(vif_manual(modelo1)["horsepower"],1)` — todos próximos ou muito acima do limiar de referência (10). Apenas `acceleration` (VIF $= `r round(vif_manual(modelo1)["acceleration"],2)`$) e `year` (VIF $= `r round(vif_manual(modelo1)["year"],2)`$) estão livres do problema.
 
-O impacto da multicolinearidade fica evidente na Tabela \ref{tab:coefInicial}: embora `weight`, `displacement`, `horsepower` e `cylinders` apresentem, individualmente, forte correlação com o consumo (Figura \ref{fig:corrplot}), no modelo conjunto apenas `weight` e `year` são estatisticamente significantes — as demais variáveis de motor tornam-se não-significantes, pois competem entre si para explicar a mesma parcela da variância. Há ainda um sinal contraintuitivo: o coeficiente de `displacement` é positivo ($`r round(coef(modelo1)["displacement"],4)`$), sugerindo, de forma absurda, que motores de maior cilindrada aumentariam a economia — quando sua correlação bruta com `mpg` é fortemente negativa ($r = `r round(cor(dados$mpg, dados$displacement),3)`$). Estes sintomas — inflação de variância, perda de significância e sinais trocados — são consequências típicas da multicolinearidade, que torna as estimativas individuais instáveis e pouco confiáveis, ainda que o ajuste global do modelo permaneça bom.
+O impacto da multicolinearidade fica evidente na Tabela \ref{tab:coefInicial}. Embora `weight`, `displacement`, `horsepower` e `cylinders` tenham forte correlação individual com o consumo (Figura \ref{fig:corrplot}), no modelo conjunto apenas `weight` e `year` permanecem estatisticamente significantes. As variáveis de motor competem para explicar praticamente a mesma parcela da variância. O coeficiente positivo de `displacement` ($`r round(coef(modelo1)["displacement"],4)`$) reforça o problema: isoladamente, sua correlação com `mpg` é fortemente negativa ($r = `r round(cor(dados$mpg, dados$displacement),3)`$), mas o sinal se inverte quando as medidas redundantes entram juntas. Assim, um bom ajuste global não garante que todos os coeficientes individuais sejam estáveis ou confiáveis.
 
 ## Seleção do modelo final
 
-As variáveis problemáticas — `cylinders`, `displacement`, `horsepower` e `weight` — carregam essencialmente a mesma informação sobre o porte do veículo. A estratégia natural é reter apenas uma delas. Para decidir qual, ajustamos modelos candidatos que mantêm uma única variável de motor, sempre acompanhada de `year`, e os comparamos por $R^2$ ajustado, AIC e BIC (Tabela \ref{tab:selecaoModelos}).
+Como `cylinders`, `displacement`, `horsepower` e `weight` representam aspectos semelhantes do porte do veículo, manter todas no modelo acrescenta redundância, não necessariamente informação. Por isso, ajustamos modelos candidatos com apenas uma dessas medidas, sempre acompanhada de `year`, e os comparamos por $R^2$ ajustado, AIC e BIC (Tabela \ref{tab:selecaoModelos}).
 
 ```{r modelosCandidatos, results='asis'}
 modelo2  <- lm(mpg ~ weight + year, data = dados)
