@@ -38,7 +38,7 @@ keywords:
 
 # resumo - note a barra vertical e os dois espaços no início do parágrafo
 abstract: |
-  Este trabalho aplica a metodologia de regressão linear múltipla (MRLM) ao conjunto de dados Auto, do pacote ISLR, que reúne características técnicas de 392 automóveis fabricados entre 1970 e 1982, com o objetivo de modelar o consumo de combustível (em milhas por galão) a partir das demais características do veículo e de sua origem. Após uma análise exploratória uni e bivariada, incluindo estatísticas descritivas, correlações, histogramas e box-plots, ajustamos um modelo inicial com todas as variáveis explicativas e identificamos multicolinearidade severa entre as variáveis que descrevem o porte do motor (número de cilindros, cilindrada, potência e peso). Comparamos modelos candidatos por AIC, BIC e teste F, selecionamos um modelo final e verificamos seus pressupostos através de análise de resíduos, gráfico de envelope simulado e identificação de pontos atípicos, de alavanca e influentes, resolvendo a violação de homocedasticidade observada. Em seguida, incorporamos a origem do veículo como variável qualitativa (dummy), discutindo a codificação por categoria de referência e o efeito de sua alteração sobre a interpretação dos coeficientes. Por fim, para dois conjuntos de valores das variáveis explicativas, apresentamos os intervalos de confiança para o valor médio esperado da variável resposta e os intervalos de predição para novas observações, com interpretação prática de ambos.
+  Este trabalho aplica a metodologia de regressão linear múltipla (MRLM) ao conjunto de dados Auto, do pacote ISLR, que reúne características técnicas de 392 automóveis fabricados entre 1970 e 1982, com o objetivo de modelar o consumo de combustível (em milhas por galão) a partir das demais características do veículo e de sua origem. Após uma análise exploratória uni e bivariada, incluindo estatísticas descritivas, correlações, histogramas e box-plots, ajustamos um modelo inicial com todas as variáveis explicativas e identificamos multicolinearidade severa entre as variáveis que descrevem o porte do motor (número de cilindros, cilindrada, potência e peso). Comparamos modelos candidatos por AIC, BIC e teste F, selecionamos um modelo final e verificamos seus pressupostos através de análise de resíduos, gráfico de envelope simulado e identificação de pontos atípicos, de alavanca e influentes, resolvendo a violação de homocedasticidade observada. Em seguida, incorporamos a origem do veículo como variável qualitativa (dummy), discutindo a codificação por categoria de referência e o efeito de sua alteração sobre a interpretação dos coeficientes. Na etapa final, para dois conjuntos de valores das variáveis explicativas, apresentamos os intervalos de confiança para o valor médio esperado da variável resposta e os intervalos de predição para novas observações, com interpretação prática de ambos.
 
 # arquivo com a bibliografia do relatorio
 bibliography: modeloUFCG.bib
@@ -139,7 +139,7 @@ $$y_i = \beta_0 + \beta_1\,\text{cil}_i + \beta_2\,\text{cilindrada}_i + \beta_3
 
 A multicolinearidade entre as variáveis explicativas foi avaliada por dois critérios complementares: (a) a matriz de correlações entre as variáveis preditoras, em que valores absolutos de correlação $\geq 0{,}8$ (ou $0{,}9$) são indicativos de possível multicolinearidade; e (b) o fator de inflação de variância, $\text{VIF}_j = 1/(1-R_j^2)$, em que $R_j^2$ é o coeficiente de determinação da regressão de $X_j$ sobre as demais explicativas, sendo $\text{VIF}_j > 10$ indicativo de multicolinearidade severa e $\text{VIF}_j > 5$ já considerado potencialmente problemático \cite{Kutner2004}.
 
-A seleção do modelo entre os candidatos foi conduzida por meio de três instrumentos: o Critério de Informação de Akaike \cite{Akaike1974}, $\text{AIC} = -2\log(\hat L) + 2k$; o Critério de Informação Bayesiano \cite{Schwarz1978}, $\text{BIC} = -2\log(\hat L) + k\log(n)$, que penaliza a complexidade do modelo mais fortemente que o AIC; e o teste $F$ de comparação entre modelos aninhados. Em ambos os critérios de informação, o modelo com menor valor é o preferível, e uma diferença superior a 10 entre os valores é usualmente considerada evidência forte de uma real diferença de qualidade entre os modelos. Complementarmente, aplicamos o procedimento *stepwise* automático (`step`, baseado em AIC) ao modelo inicial, para contrastar a seleção automática com a escolha orientada por interpretabilidade.
+A seleção do modelo entre os candidatos foi conduzida por meio de três instrumentos: o Critério de Informação de Akaike \cite{Akaike1974}, $\text{AIC} = -2\log(\hat L) + 2k$; o Critério de Informação Bayesiano \cite{Schwarz1978}, $\text{BIC} = -2\log(\hat L) + k\log(n)$, que penaliza a complexidade do modelo mais fortemente que o AIC; e o teste $F$ de comparação entre modelos aninhados. Em ambos os critérios de informação, o modelo com menor valor é o preferível, e uma diferença superior a 10 entre os valores é usualmente considerada evidência forte de uma real diferença de qualidade entre os modelos. Como verificação adicional, aplicamos o procedimento *stepwise* automático (`step`, baseado em AIC) ao modelo inicial, para contrastar a seleção automática com a escolha orientada por interpretabilidade.
 
 ## Diagnóstico do modelo
 
@@ -240,7 +240,7 @@ ggplot(auto_long, aes(x = Variavel, y = Valor)) +
   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
 ```
 
-Os box-plots não revelam valores extremos que sugiram erros de medição: os pontos além dos "bigodes", sobretudo em `horsepower` e `acceleration`, correspondem a veículos de fato mais potentes ou mais lentos, dentro do esperado para a época.
+Os box-plots não revelam valores extremos que sugiram erros de medição: os pontos além dos bigodes, sobretudo em `horsepower` e `acceleration`, correspondem a veículos de fato mais potentes ou mais lentos, compatíveis com a diversidade dos automóveis da época.
 
 ### Análise de correlação e origem do veículo
 
@@ -266,11 +266,11 @@ Na análise de correlação, é desejável observar altas correlações das vari
 
 1. A variável resposta `mpg` apresenta correlação negativa e forte com as variáveis de porte do motor: `weight` ($r=`r round(cor(dados$mpg, dados$weight),3)`$), `displacement` ($r=`r round(cor(dados$mpg, dados$displacement),3)`$), `horsepower` ($r=`r round(cor(dados$mpg, dados$horsepower),3)`$) e `cylinders` ($r=`r round(cor(dados$mpg, dados$cylinders),3)`$). Ou seja, carros mais pesados e potentes tendem a consumir mais combustível (menor `mpg`).
 2. `mpg` correlaciona-se de forma positiva e moderada com `year` ($r=`r round(cor(dados$mpg, dados$year),3)`$) e `acceleration` ($r=`r round(cor(dados$mpg, dados$acceleration),3)`$): carros mais recentes e com maior tempo de aceleração (menos "arrancadores") tendem a ser mais econômicos.
-3. Entre as próprias variáveis explicativas, as de porte do motor são **muito fortemente correlacionadas entre si**: `displacement` e `cylinders` ($r=`r round(cor(dados$displacement, dados$cylinders),3)`$), `displacement` e `weight` ($r=`r round(cor(dados$displacement, dados$weight),3)`$) e `cylinders` e `weight` ($r=`r round(cor(dados$cylinders, dados$weight),3)`$), todas bem acima do limiar de referência de $0{,}8$. Isto configura um indício claro de multicolinearidade, que será confirmado adiante pelo VIF.
+3. Entre as próprias variáveis explicativas, as de porte do motor são **muito fortemente correlacionadas entre si**: `displacement` e `cylinders` ($r=`r round(cor(dados$displacement, dados$cylinders),3)`$), `displacement` e `weight` ($r=`r round(cor(dados$displacement, dados$weight),3)`$) e `cylinders` e `weight` ($r=`r round(cor(dados$cylinders, dados$weight),3)`$), todas bem acima do limiar de referência de $0{,}8$. Esse padrão aponta para multicolinearidade, cuja intensidade será quantificada adiante pelo VIF.
 
 A matriz de dispersão da Figura \ref{fig:ggpairs} complementa essa leitura de três formas. Primeiro, os gráficos de dispersão (triângulo inferior) mostram que a relação entre `mpg` e as variáveis de motor é negativa, porém não-linear: a nuvem de pontos curva-se, caindo mais depressa entre os carros leves e achatando-se entre os pesados — um indício precoce de que uma transformação da resposta poderá ser necessária. Segundo, os coeficientes de correlação exibidos por origem (triângulo superior) confirmam que as associações se mantêm dentro de cada grupo, não sendo um artefato da mistura de origens. Terceiro, as cores separam os grupos: os carros americanos concentram-se na região pesada, potente e de menor consumo, enquanto japoneses e europeus ocupam a faixa mais leve e econômica — antecipando o efeito da origem, que será incorporado ao modelo adiante.
 
-Por fim, a Figura \ref{fig:boxOrigem} mostra a distribuição de `mpg` por origem do veículo.
+Na sequência, a Figura \ref{fig:boxOrigem} mostra a distribuição de `mpg` por origem do veículo.
 
 ```{r boxOrigem, fig.cap="\\label{fig:boxOrigem} Consumo de combustível (mpg) por origem do veículo.", fig.width=6, fig.height=3.6, out.width="70%"}
 ggplot(dados, aes(x = origin, y = mpg, fill = origin)) +
@@ -278,7 +278,7 @@ ggplot(dados, aes(x = origin, y = mpg, fill = origin)) +
   labs(x = "Origem", y = "mpg")
 ```
 
-Observa-se uma diferença nítida entre os grupos: veículos japoneses (mediana de `r round(median(dados$mpg[dados$origin=="japonês"]),1)` mpg) e europeus (`r round(median(dados$mpg[dados$origin=="europeu"]),1)` mpg) são, em geral, mais econômicos do que os americanos (`r round(median(dados$mpg[dados$origin=="americano"]),1)` mpg), o que é coerente com o perfil de veículos maiores e mais potentes fabricados nos Estados Unidos no período. Isto sugere que a origem é uma variável explicativa potencialmente relevante, a ser incorporada ao modelo por meio de variáveis dummy.
+Observa-se uma diferença nítida entre os grupos: veículos japoneses (mediana de `r round(median(dados$mpg[dados$origin=="japonês"]),1)` mpg) e europeus (`r round(median(dados$mpg[dados$origin=="europeu"]),1)` mpg) são, em geral, mais econômicos do que os americanos (`r round(median(dados$mpg[dados$origin=="americano"]),1)` mpg), resultado compatível com o perfil de veículos maiores e mais potentes fabricados nos Estados Unidos no período. Esse contraste reforça a relevância potencial da origem como variável explicativa, a ser incorporada ao modelo por meio de variáveis dummy.
 
 ### Multicolinearidade: o VIF
 
@@ -327,7 +327,7 @@ knitr::kable(tab_selecao, format = "pipe", row.names = FALSE)
 ```
 Table: (\#tab:selecaoModelos) Comparação dos modelos candidatos: ajuste, AIC e BIC.
 
-Entre as quatro variáveis de motor, `weight` é claramente a mais informativa: o modelo `weight + year` alcança $R^2$ ajustado de `r round(summary(modelo2)$adj.r.squared,3)`, muito superior aos candidatos com `displacement` (`r round(summary(cand_disp)$adj.r.squared,3)`), `cylinders` (`r round(summary(cand_cyl)$adj.r.squared,3)`) ou `horsepower` (`r round(summary(cand_hp)$adj.r.squared,3)`), e apresenta o menor AIC e BIC. Isto é coerente com a análise de correlação, em que `weight` é a variável mais fortemente associada ao consumo ($r = `r round(cor(dados$mpg, dados$weight),3)`$). Selecionamos, portanto, **`mpg ~ weight + year`** como modelo final, que passaremos a chamar de modelo2.
+Entre as quatro variáveis de motor, `weight` é claramente a mais informativa: o modelo `weight + year` alcança $R^2$ ajustado de `r round(summary(modelo2)$adj.r.squared,3)`, muito superior aos candidatos com `displacement` (`r round(summary(cand_disp)$adj.r.squared,3)`), `cylinders` (`r round(summary(cand_cyl)$adj.r.squared,3)`) ou `horsepower` (`r round(summary(cand_hp)$adj.r.squared,3)`), e apresenta o menor AIC e BIC. O resultado acompanha a análise de correlação, na qual `weight` é a variável mais fortemente associada ao consumo ($r = `r round(cor(dados$mpg, dados$weight),3)`$). Selecionamos, portanto, **`mpg ~ weight + year`** como modelo final, que passaremos a chamar de modelo2.
 
 Este modelo reduzido não apenas resolve a multicolinearidade — o VIF de `weight` e `year` cai para `r round(vif_manual(modelo2)["weight"],2)` — como praticamente **não perde poder explicativo**: seu $R^2$ ajustado (`r round(summary(modelo2)$adj.r.squared,3)`) é virtualmente igual ao do modelo completo (`r round(summary(modelo1)$adj.r.squared,3)`), apesar de usar quatro variáveis a menos. O teste F confirma que as variáveis descartadas não trazem ganho estatístico relevante (Tabela \ref{tab:anovaModelo2}):
 
@@ -382,7 +382,7 @@ Além da inspeção visual, aplicamos o teste de Breusch-Pagan, cuja hipótese n
 teste_bp(modelo2)
 ```
 
-O p-valor é praticamente nulo (`r signif(teste_bp(modelo2)["p_valor"], 3)`), de modo que **rejeitamos a homocedasticidade**: o pressuposto de variância constante está violado. Isto compromete os erros-padrão e, por consequência, os testes de significância e os intervalos — é preciso corrigir antes de prosseguir.
+O p-valor é praticamente nulo (`r signif(teste_bp(modelo2)["p_valor"], 3)`), de modo que **rejeitamos a homocedasticidade**: o pressuposto de variância constante está violado. Como consequência, ficam comprometidos os erros-padrão, os testes de significância e os intervalos — é preciso corrigir antes de prosseguir.
 
 ### Resolução: transformação logarítmica da resposta
 
@@ -519,7 +519,7 @@ knitr::kable(tab_tt, format = "pipe", row.names = FALSE)
 ```
 Table: (\#tab:treinoTeste) Desempenho do modelo final em treino e teste (divisão 80/20).
 
-O erro no teste (RMSE de cerca de `r round(rmse(teste$mpg, pred_te),1)` mpg) é praticamente igual ao do treino, e o $R^2$ de teste (`r round(r2(teste$mpg, pred_te),3)`) mantém-se elevado. Isto indica que o modelo não está superajustado (*overfitting*): ele generaliza bem para carros que não participaram de sua estimação. O RMSE é calculado na escala original de `mpg`, aplicando `exp()` às previsões, que o modelo produz em escala logarítmica.
+O erro no teste (RMSE de cerca de `r round(rmse(teste$mpg, pred_te),1)` mpg) é praticamente igual ao do treino, e o $R^2$ de teste (`r round(r2(teste$mpg, pred_te),3)`) mantém-se elevado. A proximidade entre os resultados afasta sinais de superajuste (*overfitting*) e mostra boa generalização para carros que não participaram de sua estimação. O RMSE é calculado na escala original de `mpg`, aplicando `exp()` às previsões, que o modelo produz em escala logarítmica.
 
 ## Comparação geral dos modelos
 
@@ -587,4 +587,4 @@ Este trabalho modelou o consumo de combustível de automóveis a partir de suas 
 
 A seleção por AIC, BIC, teste F e *stepwise* convergiu para um modelo parcimonioso, `mpg ~ weight + year`, que elimina a multicolinearidade praticamente sem perda de ajuste. O diagnóstico de resíduos revelou heterocedasticidade, resolvida por uma transformação logarítmica da resposta, justificada pelo método de Box-Cox. A inclusão da origem do veículo, via variáveis dummy, produziu o modelo final `log(mpg) ~ weight + year + origin`, com todos os atributos significativos ($p < 0{,}01$) e $R^2$ ajustado de `r round(summary(modelo4)$adj.r.squared,3)`.
 
-A validação por divisão treino/teste (80/20) confirmou que o modelo generaliza bem para dados novos, sem sinais de superajuste. Por fim, ilustramos a distinção entre o intervalo de confiança (para o consumo médio) e o intervalo de predição (para um carro individual), essencial para comunicar corretamente a incerteza de uma previsão. O estudo evidencia que peso, ano e origem são determinantes centrais da eficiência de combustível, e que o tratamento cuidadoso da multicolinearidade e dos pressupostos do MRLM é indispensável para uma interpretação confiável dos resultados.
+A validação por divisão treino/teste (80/20) confirmou que o modelo generaliza bem para dados novos, sem sinais de superajuste. Na última etapa, ilustramos a distinção entre o intervalo de confiança (para o consumo médio) e o intervalo de predição (para um carro individual), essencial para comunicar corretamente a incerteza de uma previsão. O estudo evidencia que peso, ano e origem são determinantes centrais da eficiência de combustível, e que o tratamento cuidadoso da multicolinearidade e dos pressupostos do MRLM é indispensável para uma interpretação confiável dos resultados.
