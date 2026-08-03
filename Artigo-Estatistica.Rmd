@@ -20,21 +20,21 @@ author:
     affiliation: a
 address:
   - code: a
-    address: Departamento de Ciência da Computação - UFCG
+    address: Unidade Acadêmica de Sistemas e Computação (UASC) - UFCG
 
 # area do conhecimento (pelo menos uma)
 subject:
-  - "estatistica aplicada"
-  - "modelagem preditiva"
+  - "Estatística Aplicada"
+  - "Modelagem Preditiva"
 
 # palavras-chave
 keywords:
-  - regressao linear multipla
+  - regressão linear múltipla
   - multicolinearidade
-  - selecao de modelos
-  - consumo de combustivel
-  - variaveis dummy
-  - diagnostico de residuos
+  - seleção de modelos
+  - consumo de combustível
+  - variáveis dummy
+  - diagnóstico de resíduos
 
 # resumo - note a barra vertical e os dois espaços no início do parágrafo
 abstract: |
@@ -135,15 +135,15 @@ Seja $y_i$ o consumo de combustível (`mpg`) do $i$-ésimo veículo. O modelo in
 
 $$y_i = \beta_0 + \beta_1\,\text{cil}_i + \beta_2\,\text{cilindrada}_i + \beta_3\,\text{potencia}_i + \beta_4\,\text{peso}_i + \beta_5\,\text{acel}_i + \beta_6\,\text{ano}_i + \varepsilon_i,$$
 
-\noindent em que $\varepsilon_i$ segue as suposições usuais do MRLM \cite{Kutner2004}: média nula, variância constante, independência e normalidade.
+\noindent em que $\varepsilon_i$ segue as suposições usuais do MRLM \cite{Favero2009}: média nula, variância constante, independência e normalidade.
 
-A multicolinearidade entre as variáveis explicativas foi avaliada por dois critérios complementares. O primeiro foi a matriz de correlações entre as variáveis preditoras, em que valores absolutos de correlação $\geq 0{,}8$ (ou $0{,}9$) são indicativos de possível multicolinearidade. O segundo foi o fator de inflação de variância, $\text{VIF}_j = 1/(1-R_j^2)$, em que $R_j^2$ é o coeficiente de determinação da regressão de $X_j$ sobre as demais explicativas, sendo $\text{VIF}_j > 10$ indicativo de multicolinearidade severa e $\text{VIF}_j > 5$ já considerado potencialmente problemático \cite{Kutner2004}.
+A multicolinearidade entre as variáveis explicativas foi avaliada por dois critérios complementares. O primeiro foi a matriz de correlações entre as variáveis preditoras, em que valores absolutos de correlação $\geq 0{,}8$ (ou $0{,}9$) são indicativos de possível multicolinearidade. O segundo foi o fator de inflação de variância, $\text{VIF}_j = 1/(1-R_j^2)$, em que $R_j^2$ é o coeficiente de determinação da regressão de $X_j$ sobre as demais explicativas, sendo $\text{VIF}_j > 10$ indicativo de multicolinearidade severa e $\text{VIF}_j > 5$ já considerado potencialmente problemático \cite{SinghVIF, Favero2009}.
 
-A seleção do modelo entre os candidatos foi conduzida por meio de três instrumentos: o Critério de Informação de Akaike \cite{Akaike1974}, $\text{AIC} = -2\log(\hat L) + 2k$; o Critério de Informação Bayesiano \cite{Schwarz1978}, $\text{BIC} = -2\log(\hat L) + k\log(n)$, que penaliza a complexidade do modelo mais fortemente que o AIC; e o teste $F$ de comparação entre modelos aninhados. Em ambos os critérios de informação, o modelo com menor valor é o preferível, e uma diferença superior a 10 entre os valores é usualmente considerada evidência forte de uma real diferença de qualidade entre os modelos. Como verificação adicional, aplicamos o procedimento *stepwise* automático (`step`, baseado em AIC) ao modelo inicial, para contrastar a seleção automática com a escolha orientada por interpretabilidade.
+A seleção do modelo entre os candidatos foi conduzida por meio de três instrumentos: o Critério de Informação de Akaike \cite{Zhang2023}, $\text{AIC} = -2\log(\hat L) + 2k$; o Critério de Informação Bayesiano \cite{Zhang2023}, $\text{BIC} = -2\log(\hat L) + k\log(n)$, que penaliza a complexidade do modelo mais fortemente que o AIC; e o teste $F$ de comparação entre modelos aninhados. Em ambos os critérios de informação, o modelo com menor valor é o preferível, e uma diferença superior a 10 entre os valores é usualmente considerada evidência forte de uma real diferença de qualidade entre os modelos. Como verificação adicional, aplicamos o procedimento *stepwise* automático (`step`, baseado em AIC) ao modelo inicial, para contrastar a seleção automática com a escolha orientada por interpretabilidade.
 
 ## Diagnóstico do modelo
 
-A adequação do modelo selecionado foi avaliada por meio de análise gráfica dos resíduos (resíduos versus ajustados, quantil-quantil, escala-localização e alavancagem), do gráfico de envelope simulado (99 simulações, banda de confiança para o quantil-quantil dos resíduos) e da identificação de observações atípicas ($|t_i| > 2$), de alavanca ($h_{ii} > 2p/n$) e influentes (distância de Cook $D_i > 4/n$; \cite{Cook1977,CookWeisberg1982,Kutner2004}). As observações influentes foram removidas e o modelo reajustado, comparando-se as estimativas resultantes com as do modelo original. A hipótese de variância constante foi testada formalmente pelo teste de Breusch-Pagan \cite{BreuschPagan1979}; havendo violação, a variância foi estabilizada por uma transformação da variável resposta, com o expoente escolhido pelo método de Box-Cox \cite{BoxCox1964}.
+A adequação do modelo selecionado foi avaliada por meio de análise gráfica dos resíduos (resíduos versus ajustados, quantil-quantil, escala-localização e alavancagem), do gráfico de envelope simulado (99 simulações, banda de confiança para o quantil-quantil dos resíduos) e da identificação de observações atípicas ($|t_i| > 2$), de alavanca ($h_{ii} > 2p/n$) e influentes (distância de Cook $D_i > 4/n$; \cite{Favero2009}). As observações influentes foram removidas e o modelo reajustado, comparando-se as estimativas resultantes com as do modelo original. A hipótese de variância constante foi testada formalmente pelo teste de Breusch-Pagan \cite{Favero2009}; havendo violação, a variância foi estabilizada por uma transformação da variável resposta, com o expoente escolhido pelo método de Box-Cox \cite{Favero2009}.
 
 Para comparar a importância relativa das variáveis explicativas, medidas em escalas distintas, calculamos também os coeficientes padronizados do modelo selecionado, obtidos ajustando o modelo sobre as variáveis previamente padronizadas (média 0, desvio-padrão 1).
 
@@ -157,7 +157,7 @@ Para avaliar a capacidade de generalização do modelo final, dividimos aleatori
 
 ## Inferência preditiva
 
-Para um vetor de valores das variáveis explicativas $\mathbf{x}_h$, distinguem-se dois tipos de inferência \cite{Kutner2004}: o intervalo de confiança para o valor médio esperado da resposta, $\text{E}(Y_h\mid\mathbf{x}_h)$, que estima a média da resposta para a subpopulação com aquelas características; e o intervalo de predição para uma nova observação individual, $Y_h$, necessariamente mais largo, pois soma à incerteza sobre a média a variabilidade individual em torno dela. Ambos foram calculados para dois conjuntos hipotéticos de valores das variáveis explicativas, dentro do intervalo observado nos dados.
+Para um vetor de valores das variáveis explicativas $\mathbf{x}_h$, distinguem-se dois tipos de inferência \cite{Triola2017}: o intervalo de confiança para o valor médio esperado da resposta, $\text{E}(Y_h\mid\mathbf{x}_h)$, que estima a média da resposta para a subpopulação com aquelas características; e o intervalo de predição para uma nova observação individual, $Y_h$, necessariamente mais largo, pois soma à incerteza sobre a média a variabilidade individual em torno dela. Ambos foram calculados para dois conjuntos hipotéticos de valores das variáveis explicativas, dentro do intervalo observado nos dados.
 
 
 
