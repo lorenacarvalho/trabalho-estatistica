@@ -1,7 +1,6 @@
 ---
 title: Modelagem do Consumo de Combustível de Automóveis por Regressão Linear Múltipla
 
-# informacoes da disciplina, exibidas no cabecalho do artigo
 disciplina: "Estatística Aplicada"
 periodo: "2026.1"
 professores:
@@ -9,8 +8,6 @@ professores:
   - "Prof. Dr. Jerfson Bruno"
   - "Prof. Dr. Gilberto Matos"
 
-# use letras para afiliacao
-# substitua "[Nome do Aluno]" pelos nomes dos ate 3 integrantes da equipe
 author:
   - name: "Anna Lívia dos Santos Macedo Costa"
     affiliation: a
@@ -22,12 +19,10 @@ address:
   - code: a
     address: Unidade Acadêmica de Sistemas e Computação (UASC) - UFCG
 
-# area do conhecimento (pelo menos uma)
 subject:
   - "Estatística Aplicada"
   - "Modelagem Preditiva"
 
-# palavras-chave
 keywords:
   - regressão linear múltipla
   - multicolinearidade
@@ -36,11 +31,9 @@ keywords:
   - variáveis dummy
   - diagnóstico de resíduos
 
-# resumo - note a barra vertical e os dois espaços no início do parágrafo
 abstract: |
-  Este trabalho aplica a metodologia de regressão linear múltipla (MRLM) ao conjunto de dados Auto, do pacote ISLR, que reúne características técnicas de 392 automóveis fabricados entre 1970 e 1982, com o objetivo de modelar o consumo de combustível (em milhas por galão) a partir das demais características do veículo e de sua origem. Após uma análise exploratória uni e bivariada, incluindo estatísticas descritivas, correlações, histogramas e box-plots, ajustamos um modelo inicial com todas as variáveis explicativas e identificamos multicolinearidade severa entre as variáveis que descrevem o porte do motor (número de cilindros, cilindrada, potência e peso). Comparamos modelos candidatos por AIC, BIC e teste F, selecionamos um modelo final e verificamos seus pressupostos através de análise de resíduos, gráfico de envelope simulado e identificação de pontos atípicos, de alavanca e influentes, resolvendo a violação de homocedasticidade observada. Em seguida, incorporamos a origem do veículo como variável qualitativa (dummy), discutindo a codificação por categoria de referência e o efeito de sua alteração sobre a interpretação dos coeficientes. Na etapa final, para dois conjuntos de valores das variáveis explicativas, apresentamos os intervalos de confiança para o valor médio esperado da variável resposta e os intervalos de predição para novas observações, com interpretação prática de ambos.
+  Este trabalho aplica a metodologia de regressão linear múltipla (MRLM) ao conjunto de dados Auto, do pacote ISLR, que reúne características técnicas de 392 automóveis fabricados entre 1970 e 1982, com o objetivo de modelar o consumo de combustível (em milhas por galão) a partir das demais características do veículo e de sua origem. Após uma análise exploratória uni e bivariada, incluindo estatísticas descritivas, correlações, histogramas e box-plots, ajustamos um modelo inicial com todas as variáveis explicativas e identificamos multicolinearidade severa entre as variáveis que descrevem o porte do motor, sendo elas: número de cilindros, cilindrada, potência e peso. Comparamos modelos candidatos por AIC, BIC e teste F, selecionamos um modelo final e verificamos seus pressupostos através de análise de resíduos, gráfico de envelope simulado e identificação de pontos atípicos, de alavanca e influentes, resolvendo a violação de homocedasticidade observada. Em seguida, incorporamos a origem do veículo como variável qualitativa (dummy), discutindo a codificação por categoria de referência e o efeito de sua alteração sobre a interpretação dos coeficientes. Na etapa final, para dois conjuntos de valores das variáveis explicativas, apresentamos os intervalos de confiança para o valor médio esperado da variável resposta e os intervalos de predição para novas observações, com interpretação prática de ambos.
 
-# arquivo com a bibliografia do relatorio
 bibliography: modeloUFCG.bib
 
 output:
@@ -127,7 +120,7 @@ Especificamente, buscamos descrever a base de dados e realizar uma análise expl
 
 # Metodologia
 
-O conjunto de dados `Auto` \cite{James2013} contém 392 automóveis fabricados entre 1970 e 1982, sem valores ausentes (5 registros do arquivo original, com potência não informada, já haviam sido removidos). A análise exploratória compreendeu estatísticas descritivas, matriz de correlações, histogramas, box-plots por origem e matriz de dispersão par a par.
+O conjunto de dados `Auto` \cite{James2013} contém 392 automóveis que foram fabricados entre 1970 e 1982, sem valores ausentes, uma vez que os 5 registros do arquivo original, com potência não informada, já haviam sido removidos. A análise exploratória compreendeu estatísticas descritivas, matriz de correlações, histogramas, box-plots por origem e matriz de dispersão par a par.
 
 ## Modelo de regressão linear múltipla
 
@@ -216,7 +209,7 @@ knitr::kable(tab_desc, format = "pipe", row.names = FALSE,
              caption = "\\label{tab:descritivas} Estatísticas descritivas das variáveis numéricas.")
 ```
 
-Os automóveis percorrem, em média, `r round(mean(dados$mpg), 1)` milhas por galão, mas a amplitude de `r min(dados$mpg)` a `r max(dados$mpg)` mpg revela perfis de eficiência bastante diferentes. A Figura \ref{fig:histMpg} mostra que a maior parte dos veículos está entre 15 e 30 mpg, enquanto poucos modelos muito econômicos formam uma cauda à direita. Esse formato antecipa a possível necessidade de transformar a resposta na etapa de modelagem.
+Os automóveis percorrem, em média, `r round(mean(dados$mpg), 1)` milhas por galão, mas a amplitude de `r min(dados$mpg)` a `r max(dados$mpg)` mpg revela perfis de eficiência bastante diferentes. Observa-se também elevada variabilidade (DP = 7,8 mpg), indicando que a amostra contém veículos de diferentes categorias, desde compactos econômicos até modelos grandes de alto consumo. A Figura \ref{fig:histMpg} mostra que a maior parte dos veículos está entre 15 e 30 mpg, enquanto poucos modelos muito econômicos formam uma cauda à direita. Esse formato antecipa a possível necessidade de transformar a resposta na etapa de modelagem.
 
 ```{r histMpg, fig.cap="\\label{fig:histMpg} Distribuição do consumo de combustível (mpg). A linha tracejada indica a média.", fig.width=6, fig.height=3.6, out.width="75%"}
 ggplot(dados, aes(mpg)) +
@@ -240,7 +233,7 @@ ggplot(auto_long, aes(x = Variavel, y = Valor)) +
   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
 ```
 
-Os box-plots não revelam valores extremos que sugiram erros de medição: os pontos além dos bigodes, sobretudo em `horsepower` e `acceleration`, correspondem a veículos de fato mais potentes ou mais lentos, compatíveis com a diversidade dos automóveis da época.
+Os box-plots ajudam a comparar a dispersão das variáveis numéricas e a identificar possíveis valores extremos. É em `weight` que essa variabilidade aparece com mais força — o que faz sentido, já que a amostra reúne desde veículos leves até modelos bem mais pesados. `displacement` segue na mesma linha, com dispersão considerável, refletindo a diversidade no tamanho dos motores, mas sem outliers evidentes. Já `year` se comporta de forma bem mais concentrada, resultado esperado do intervalo relativamente curto de anos coberto pela base. Em `horsepower` e `acceleration`, aparecem alguns pontos além dos bigodes, provavelmente veículos com potência bem acima da média ou com desempenho de aceleração fora do padrão observado. `cylinders`, por assumir apenas alguns valores inteiros, acaba tendo um box-plot menos informativo — algo típico de variáveis discretas. De modo geral, os valores observados são coerentes com a diversidade de automóveis do período e não sugerem erros de medição ou de registro.
 
 ### Análise de correlação e origem do veículo
 
@@ -328,6 +321,8 @@ knitr::kable(tab_selecao, format = "pipe", row.names = FALSE)
 Table: (\#tab:selecaoModelos) Comparação dos modelos candidatos: ajuste, AIC e BIC.
 
 Entre as quatro variáveis de motor, `weight` é claramente a mais informativa: o modelo `weight + year` alcança $R^2$ ajustado de `r round(summary(modelo2)$adj.r.squared,3)`, muito superior aos candidatos com `displacement` (`r round(summary(cand_disp)$adj.r.squared,3)`), `cylinders` (`r round(summary(cand_cyl)$adj.r.squared,3)`) ou `horsepower` (`r round(summary(cand_hp)$adj.r.squared,3)`), e apresenta o menor AIC e BIC. O resultado acompanha a análise de correlação, na qual `weight` é a variável mais fortemente associada ao consumo ($r = `r round(cor(dados$mpg, dados$weight),3)`$). Selecionamos, portanto, **`mpg ~ weight + year`** como modelo final, que passaremos a chamar de modelo2.
+
+Além dos critérios estatísticos, a escolha de weight também é coerente do ponto de vista prático. Entre as variáveis relacionadas ao porte do veículo (cylinders, displacement, horsepower e weight), o peso sintetiza melhor as diferenças estruturais entre os automóveis, refletindo indiretamente características como tamanho do motor e dimensões do veículo. Assim, sua inclusão torna desnecessária a utilização simultânea das demais medidas altamente correlacionadas.
 
 Este modelo reduzido não apenas resolve a multicolinearidade — o VIF de `weight` e `year` cai para `r round(vif_manual(modelo2)["weight"],2)` — como praticamente **não perde poder explicativo**: seu $R^2$ ajustado (`r round(summary(modelo2)$adj.r.squared,3)`) é virtualmente igual ao do modelo completo (`r round(summary(modelo1)$adj.r.squared,3)`), apesar de usar quatro variáveis a menos. O teste F confirma que as variáveis descartadas não trazem ganho estatístico relevante (Tabela \ref{tab:anovaModelo2}):
 
@@ -587,4 +582,4 @@ Este trabalho modelou o consumo de combustível de automóveis a partir de suas 
 
 A seleção por AIC, BIC, teste F e *stepwise* convergiu para um modelo parcimonioso, `mpg ~ weight + year`, que elimina a multicolinearidade praticamente sem perda de ajuste. O diagnóstico de resíduos revelou heterocedasticidade, resolvida por uma transformação logarítmica da resposta, justificada pelo método de Box-Cox. A inclusão da origem do veículo, via variáveis dummy, produziu o modelo final `log(mpg) ~ weight + year + origin`, com todos os atributos significativos ($p < 0{,}01$) e $R^2$ ajustado de `r round(summary(modelo4)$adj.r.squared,3)`.
 
-A validação por divisão treino/teste (80/20) confirmou que o modelo generaliza bem para dados novos, sem sinais de superajuste. Na última etapa, ilustramos a distinção entre o intervalo de confiança (para o consumo médio) e o intervalo de predição (para um carro individual), essencial para comunicar corretamente a incerteza de uma previsão. O estudo evidencia que peso, ano e origem são determinantes centrais da eficiência de combustível, e que o tratamento cuidadoso da multicolinearidade e dos pressupostos do MRLM é indispensável para uma interpretação confiável dos resultados.
+A validação por divisão treino/teste (80/20) confirmou que o modelo generaliza bem para dados novos, sem sinais de superajuste. Na última etapa, ilustramos a distinção entre o intervalo de confiança (para o consumo médio) e o intervalo de predição (para um carro individual), essencial para comunicar corretamente a incerteza de uma previsão. Do ponto de vista prático, o modelo obtido permite estimar o consumo de combustível com desempenho satisfatório a partir de informações facilmente observáveis do veículo — peso, ano e origem —, evidenciando que o tratamento cuidadoso da multicolinearidade e dos pressupostos do MRLM é indispensável para uma interpretação confiável dos resultados. Vale ressaltar, porém, que a base reúne veículos de décadas passadas, de modo que o modelo reflete os padrões tecnológicos daquele período e não deve ser extrapolado diretamente para a frota atual, que inclui motorizações híbridas e elétricas ausentes na amostra.
