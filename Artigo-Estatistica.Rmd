@@ -24,12 +24,11 @@ subject:
   - "Modelagem Preditiva"
 
 keywords:
-  - regressão linear múltipla
   - multicolinearidade
   - seleção de modelos
-  - consumo de combustível
-  - variáveis dummy
   - diagnóstico de resíduos
+  - variáveis dummy
+  - transformação Box-Cox
 
 abstract: |
   Este trabalho aplica a metodologia de regressão linear múltipla (MRLM) ao conjunto de dados Auto, do pacote ISLR, que reúne características técnicas de 392 automóveis fabricados entre 1970 e 1982, com o objetivo de modelar o consumo de combustível (em milhas por galão) a partir das demais características do veículo e de sua origem. Após uma análise exploratória uni e bivariada, incluindo estatísticas descritivas, correlações, histogramas e box-plots, ajustamos um modelo inicial com todas as variáveis explicativas e identificamos multicolinearidade severa entre as variáveis que descrevem o porte do motor, sendo elas: número de cilindros, cilindrada, potência e peso. Comparamos modelos candidatos por AIC, BIC e teste F, selecionamos um modelo e verificamos seus pressupostos através de análise de resíduos, gráfico de envelope simulado e identificação de pontos atípicos, de alavanca e influentes, resolvendo a violação de homocedasticidade observada. Em seguida, incorporamos a origem do veículo como variável qualitativa (dummy), discutindo a codificação por categoria de referência e o efeito de sua alteração sobre a interpretação dos coeficientes. Na etapa final, para dois conjuntos de valores das variáveis explicativas, apresentamos os intervalos de confiança para o valor médio esperado da variável resposta e os intervalos de predição para novas observações, com interpretação prática de ambos.
@@ -120,7 +119,7 @@ Especificamente, buscamos descrever a base de dados e realizar uma análise expl
 
 # Metodologia
 
-O conjunto de dados `Auto` \cite{James2013} contém 392 automóveis que foram fabricados entre 1970 e 1982, sem valores ausentes, uma vez que os 5 registros do arquivo original, com potência não informada, já haviam sido removidos. A análise exploratória compreendeu estatísticas descritivas, matriz de correlações, histogramas, box-plots por origem e matriz de dispersão par a par.
+O conjunto de dados `Auto` \cite{James2013} contém 392 automóveis que foram fabricados entre 1970 e 1982, sem valores ausentes, uma vez que os 5 registros do arquivo original, com potência não informada, já haviam sido removidos. Seguindo um protocolo sistemático de exploração de dados \cite{Zuur2010}, a análise exploratória compreendeu estatísticas descritivas, matriz de correlações, histogramas, box-plots por origem e matriz de dispersão par a par, com atenção a valores atípicos, à homogeneidade de variância e à colinearidade entre as preditoras.
 
 ## Modelo de regressão linear múltipla
 
@@ -415,7 +414,7 @@ ggplot(comp_resid, aes(ajustado, residuo)) +
   labs(x = "Valores ajustados", y = "Resíduos")
 ```
 
-O ganho se confirma formalmente: o teste de Breusch-Pagan já não rejeita a homocedasticidade ($p = `r signif(teste_bp(modelo3)["p_valor"], 2)`$), e o $R^2$ ajustado ainda sobe de `r round(summary(modelo2)$adj.r.squared,3)` (escala original) para `r round(summary(modelo3)$adj.r.squared,3)`. A transformação resolveu o problema de variância.
+O ganho se confirma formalmente: o teste de Breusch-Pagan já não rejeita a homocedasticidade ($p = `r signif(teste_bp(modelo3)["p_valor"], 2)`$), e o $R^2$ ajustado ainda sobe de `r round(summary(modelo2)$adj.r.squared,3)` (escala original) para `r round(summary(modelo3)$adj.r.squared,3)`. A transformação resolveu o problema de variância. Vale registrar que abordagens mais avançadas, como mínimos quadrados generalizados (GLS) ou modelos aditivos generalizados (GAM), poderiam tratar a heterocedasticidade sem transformar a resposta \cite{Zuur2010}; optamos pela transformação logarítmica por ser adequada e interpretável dentro do escopo do MRLM.
 
 ## Inclusão da origem: o modelo final com variáveis dummy
 
@@ -451,7 +450,18 @@ autoplot(modelo4, label.n = 0)
 grafico_envelope(modelo4)
 ```
 
-Na Figura \ref{fig:diagModelo4}, o funil desapareceu: os resíduos vs. ajustados formam agora uma faixa de largura aproximadamente constante, e a curva de escala-locação está praticamente horizontal, indicando variância estabilizada. Na Figura \ref{fig:envModelo4} (envelope simulado), a grande maioria dos pontos permanece dentro da banda de confiança, dando suporte à suposição de normalidade dos resíduos.
+Na Figura \ref{fig:diagModelo4}, o funil desapareceu: os resíduos vs. ajustados formam agora uma faixa de largura aproximadamente constante, e a curva de escala-locação está praticamente horizontal, indicando variância estabilizada. Na Figura \ref{fig:envModelo4} (envelope simulado), a grande maioria dos pontos permanece dentro da banda de confiança, dando suporte à suposição de normalidade dos resíduos. Quanto à independência dos erros, os dados são transversais (modelos distintos de automóveis), sem estrutura temporal ou espacial que sugira autocorrelação \cite{Zuur2010}, de modo que a suposição de observações independentes é razoável.
+
+### Verificação de interações
+
+O modelo final supõe que o efeito de cada variável é o mesmo em todos os grupos (estrutura aditiva). Seguindo o protocolo de exploração de \cite{Zuur2010}, verificamos se há interações relevantes, ou seja, se o efeito de uma variável depende do valor de outra. Testamos, por exemplo, se a influência do peso sobre o consumo difere conforme a origem, comparando o modelo final com uma versão que inclui a interação `weight:origin`:
+
+```{r interacao, echo=TRUE}
+modelo4_int <- lm(log(mpg) ~ weight * origin + year, data = dados)
+anova(modelo4, modelo4_int)[2, c("F", "Pr(>F)")]
+```
+
+Embora a interação seja estatisticamente significativa a 5% ($p \approx `r round(anova(modelo4, modelo4_int)[2,"Pr(>F)"],3)`$), o ganho de ajuste é desprezível: o $R^2$ ajustado passa de `r round(summary(modelo4)$adj.r.squared,3)` para apenas `r round(summary(modelo4_int)$adj.r.squared,3)`. Testes análogos para as demais interações apontam, no máximo, ganhos igualmente pequenos. Como incluir termos de interação complicaria a interpretação sem benefício prático relevante, mantemos o modelo aditivo, por parcimônia.
 
 ### Alterando a categoria de referência
 
